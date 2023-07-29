@@ -1,4 +1,4 @@
-## Telegram weather bot.
+# Telegram weather bot.
 
 ---
 ### Setup:
