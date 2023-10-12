@@ -34,6 +34,7 @@ async def start(message: Message):
         errors.warning(e)
 
 
+# Погода ===============================================================================================================
 @dp.message()
 async def get_weather(message: Message):
     try:
