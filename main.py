@@ -1,37 +1,42 @@
+import asyncio
 import logging
+from datetime import datetime
 
-from aiogram import Bot
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import Dispatcher
-from aiogram.utils import executor
+from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.types import Message
+from aiogram.filters.command import Command
 
 import config
-from support import get_weather_by_city
+from api import get_weather_by_city
 
 bot = Bot(token=config.TOKEN)
-dp = Dispatcher(bot, storage=MemoryStorage())
+dp = Dispatcher(storage=MemoryStorage())
 
-logging.basicConfig(filename="all_log.log", level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-warning_log = logging.getLogger("warning_log")
-warning_log.setLevel(logging.WARNING)
-fh = logging.FileHandler("warning_log.log")
-formatter = logging.Formatter('%(levelname)s - %(asctime)s - %(funcName)s: %(message)s (%(lineno)d)')
+logging.basicConfig(filename="all.log", level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(filename)s function: %(funcName)s line: %(lineno)d - %(message)s')
+errors = logging.getLogger("errors")
+errors.setLevel(logging.ERROR)
+fh = logging.FileHandler("errors.log")
+formatter = logging.Formatter(
+    '%(asctime)s - %(levelname)s - %(filename)s function: %(funcName)s line: %(lineno)d - %(message)s')
 fh.setFormatter(formatter)
-warning_log.addHandler(fh)
+errors.addHandler(fh)
 
 
 # Главная ==============================================================================================================
-@dp.message_handler(commands=['start'])
-async def start(message):
+@dp.message(Command('start'))
+async def start(message: Message):
     try:
         await message.answer('Привет, я могу рассказать тебе о погоде.\n'
                              'Просто отправь название своего города.')
     except Exception as e:
-        warning_log.warning(e)
+        errors.warning(e)
 
 
-@dp.message_handler(content_types=['text'])
-async def get_weather(message):
+# Погода ===============================================================================================================
+@dp.message()
+async def get_weather(message: Message):
     try:
         weather = get_weather_by_city(message.text)
         if weather['cod'] == '404' and weather['message'] == 'city not found':
@@ -55,9 +60,13 @@ async def get_weather(message):
                                  f'💦 Влажность: {weather["main"]["humidity"]} %.\n'
                                  f'🧭 Давление: {round(weather["main"]["pressure"] * 0.750062)} мм рт. ст.')
     except Exception as e:
-        warning_log.warning(e)
+        errors.warning(e)
+
+
+async def main():
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
-    print('Работаем👌')
-    executor.start_polling(dp, skip_updates=False)
+    print(f'Бот запущен ({datetime.now().strftime("%H:%M:%S %d.%m.%Y")}).')
+    asyncio.run(main())

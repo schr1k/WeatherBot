@@ -1,2 +1,2 @@
-TOKEN = ''  # API key of telegram bot
-APP_ID = ''  # API key from https://openweathermap.org/
+TOKEN = '5959934902:AAF9QF7Rme3-SXG2pBYHcbWD_nmaFKQwBQs'
+APP_ID = '79d1ca96933b0328e1c7e3e7a26cb347'
