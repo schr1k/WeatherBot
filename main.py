@@ -37,7 +37,7 @@ async def start(message: Message):
 @dp.message()
 async def get_weather(message: Message):
     try:
-        weather = get_weather_by_city(message.text)
+        weather = await get_weather_by_city(message.text)
         if weather['cod'] == '404' and weather['message'] == 'city not found':
             await message.answer('Город не найден.\n'
                                  'Проверьте правильность написания.')
