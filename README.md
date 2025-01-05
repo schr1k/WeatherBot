@@ -1,17 +1,43 @@
-# Telegram weather bot.
+# Setup
+1. Create virtual environment.
+    ```bash  
+    python -m venv venv  
+    ```
 
----
-### Setup:
-1. Clone this repository:
+2. Activate it.
+    * On Windows:
+        ```bash
+        venv\Scripts\activate
+        ```
+
+    * On MacOS/Linux:
+        ```bash
+        source venv/bin/activate
+        ```
+
+3. Install requirements.
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Create .env file.
+    ```bash
+    cp .env.example .env
+    ```
+
+# Launch
+## Docker
+### Development mode (fast-refresh)
 ```bash
-git clone https://github.com/schr1k/WeatherBot.git .
+docker compose watch
 ```
-2. Install all necessary packages:
+
+### Production mode
 ```bash
-pip install -r requirements.txt
+docker compose up --build -d
 ```
-3. Change credentials in config.py:
-```python
-TOKEN = ''  # API key of telegram bot
-APP_ID = ''  # API key from https://openweathermap.org/
+
+## Default
+```bash
+python main.py
 ```

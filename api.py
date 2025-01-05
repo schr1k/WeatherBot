@@ -1,5 +1,5 @@
 import aiohttp
-import config
+from config import config
 
 
 async def get_weather_by_city(city) -> dict:
